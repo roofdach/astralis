@@ -4,11 +4,11 @@ const Card = ({ children }) => {
       <div className="max-w-4xl mx-auto">
 
         <div 
-          className="rounded-xl p-8"
+          className="rounded-xl p-4 sm:p-8 shadow-md"
           style={{
             background: 'var(--card)',
             border: '1px solid var(--border)',
-            color: 'var(--card-foreground)'
+            color: 'var(--card-foreground)' 
           }}
         >
           {children}
