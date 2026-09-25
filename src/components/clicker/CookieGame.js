@@ -92,7 +92,7 @@ export default function CookieGame() {
 
   return (
     <>
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 pb-12 pt-20 lg:grid-cols-3">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 pb-12 pt-6 lg:grid-cols-3">
         <section className={`${panelClass} order-1 overflow-hidden lg:sticky lg:top-20 lg:self-start`} aria-label="Bakery">
           <div className="mb-6 text-center">
             <p className="text-sm font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Astralis Bakery</p>

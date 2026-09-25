@@ -24,6 +24,25 @@ const TABS = [
 
 const buttonClass =
   "rounded-lg border border-[var(--border)] px-3 py-2 text-sm font-semibold transition-colors hover:bg-[var(--muted)] disabled:cursor-not-allowed disabled:opacity-50";
+const dangerButtonClass =
+  "rounded-lg border border-[var(--cc-bad)] px-3 py-2 text-sm font-semibold text-[var(--cc-bad)] transition-colors hover:bg-[var(--cc-bad)] hover:text-white";
+
+// In-page confirmation (window.confirm is blocked in some embedded viewers).
+function ConfirmBox({ message, confirmLabel, onConfirm, onCancel }) {
+  return (
+    <div className="flex flex-col gap-2 rounded-lg border border-[var(--cc-bad)] p-3">
+      <p>{message}</p>
+      <div className="flex flex-wrap gap-2">
+        <button type="button" onClick={onConfirm} className={dangerButtonClass}>
+          {confirmLabel}
+        </button>
+        <button type="button" onClick={onCancel} className={buttonClass}>
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function Stats({ state }) {
   const mods = getModifiers(state);
@@ -128,6 +147,7 @@ function Options({ state, dispatch }) {
   const [exported, setExported] = useState("");
   const [importText, setImportText] = useState("");
   const [importError, setImportError] = useState("");
+  const [pending, setPending] = useState(null); // "import" | "wipe" | null
 
   const toast = (title, text) => dispatch({ type: "TOAST", toast: { kind: "info", title, text } });
 
@@ -146,12 +166,17 @@ function Options({ state, dispatch }) {
   };
 
   const handleImport = () => {
-    const loaded = decodeSave(importText);
-    if (!loaded) {
-      setImportError("That doesn't look like a valid save.");
+    if (!decodeSave(importText)) {
+      setImportError("That isn't a valid save code. Paste the whole code from Export save.");
       return;
     }
-    if (!window.confirm("Importing replaces your current progress. Continue?")) return;
+    setPending("import");
+  };
+
+  const confirmImport = () => {
+    const loaded = decodeSave(importText);
+    setPending(null);
+    if (!loaded) return;
     dispatch({ type: "LOAD", state: loaded });
     saveGame(loaded);
     setImportText("");
@@ -159,8 +184,8 @@ function Options({ state, dispatch }) {
     toast("Save imported");
   };
 
-  const handleReset = () => {
-    if (!window.confirm("Wipe all progress and start over? This cannot be undone.")) return;
+  const confirmReset = () => {
+    setPending(null);
     clearSave();
     dispatch({ type: "RESET" });
     setExported("");
@@ -210,30 +235,45 @@ function Options({ state, dispatch }) {
           onChange={(e) => {
             setImportText(e.target.value);
             setImportError("");
+            if (pending === "import") setPending(null);
           }}
           placeholder="Paste a save code here"
           aria-label="Save code to import"
           className="h-24 w-full resize-none rounded-lg border border-[var(--border)] bg-[var(--background)] p-2 font-mono text-xs break-all"
         />
         {importError && <p className="text-[var(--cc-bad)]">{importError}</p>}
-        <div>
-          <button type="button" onClick={handleImport} disabled={!importText.trim()} className={buttonClass}>
-            Import
-          </button>
-        </div>
+        {pending === "import" ? (
+          <ConfirmBox
+            message="Importing replaces your current progress."
+            confirmLabel="Replace progress"
+            onConfirm={confirmImport}
+            onCancel={() => setPending(null)}
+          />
+        ) : (
+          <div>
+            <button type="button" onClick={handleImport} disabled={!importText.trim()} className={buttonClass}>
+              Import
+            </button>
+          </div>
+        )}
       </section>
 
       <section className="flex flex-col gap-2">
         <h3 className="font-bold">Danger zone</h3>
-        <div>
-          <button
-            type="button"
-            onClick={handleReset}
-            className="rounded-lg border border-[var(--cc-bad)] px-3 py-2 text-sm font-semibold text-[var(--cc-bad)] transition-colors hover:bg-[var(--cc-bad)] hover:text-white"
-          >
-            Wipe save
-          </button>
-        </div>
+        {pending === "wipe" ? (
+          <ConfirmBox
+            message="This deletes all your cookies, buildings, upgrades and achievements. It can't be undone."
+            confirmLabel="Wipe everything"
+            onConfirm={confirmReset}
+            onCancel={() => setPending(null)}
+          />
+        ) : (
+          <div>
+            <button type="button" onClick={() => setPending("wipe")} className={dangerButtonClass}>
+              Wipe save
+            </button>
+          </div>
+        )}
       </section>
     </div>
   );

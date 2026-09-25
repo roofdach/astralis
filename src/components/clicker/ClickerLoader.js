@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 const CookieGame = dynamic(() => import("./CookieGame"), {
   ssr: false,
   loading: () => (
-    <p className="pt-40 text-center text-sm text-[var(--muted-foreground)]">Preheating the oven…</p>
+    <p className="pt-24 text-center text-sm text-[var(--muted-foreground)]">Preheating the oven…</p>
   ),
 });
 

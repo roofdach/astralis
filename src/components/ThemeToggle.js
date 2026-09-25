@@ -11,7 +11,11 @@ function subscribe(onChange) {
   return () => observer.disconnect();
 }
 
-const getTheme = () => (document.documentElement.dataset.theme === "light" ? "light" : "dark");
+const getTheme = () => {
+  const { theme } = document.documentElement.dataset;
+  if (theme === "light" || theme === "dark") return theme;
+  return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+};
 const getServerTheme = () => "dark";
 
 export default function ThemeToggle() {

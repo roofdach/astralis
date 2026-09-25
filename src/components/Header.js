@@ -2,7 +2,7 @@ import ThemeToggle from "./ThemeToggle";
 
 export default function Header() {
   return (
-    <header className="fixed left-0 top-0 z-50 flex h-16 w-full items-center justify-between border-b border-[var(--border)] bg-[var(--background)]/80 px-4 backdrop-blur-md sm:px-6">
+    <header className="sticky top-[env(safe-area-inset-top,0px)] z-50 flex h-16 w-full items-center justify-between border-b border-[var(--border)] bg-[var(--background)]/80 px-4 backdrop-blur-md sm:px-6">
       <div className="flex items-center gap-2">
         <span className="text-2xl" aria-hidden="true">
           🍪
