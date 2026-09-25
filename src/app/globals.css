@@ -30,6 +30,10 @@
   --chart-grid: hsl(0, 0%, 69%);
   --chart-tooltip-bg: hsla(0, 0%, 100%, 0.95);
   --chart-tooltip-border: hsl(0, 0%, 59%);
+  --cc-accent: hsl(32 95% 44%);
+  --cc-good: hsl(142 72% 29%);
+  --cc-bad: hsl(0 72% 45%);
+  --cc-gold: hsl(45 93% 40%);
 }
 
 [data-theme="dark"] {
@@ -61,6 +65,10 @@
   --chart-grid: hsl(0, 0%, 25%);
   --chart-tooltip-bg: hsla(0, 0%, 16%, 0.95);
   --chart-tooltip-border: hsl(0, 0%, 25%);
+  --cc-accent: hsl(38 92% 55%);
+  --cc-good: hsl(142 69% 58%);
+  --cc-bad: hsl(0 91% 71%);
+  --cc-gold: hsl(48 96% 60%);
 }
 
 
@@ -68,6 +76,60 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Cookie clicker */
+@keyframes cc-float {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% - 90px));
+  }
+}
+
+@keyframes cc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes cc-golden-pulse {
+  0%,
+  100% {
+    transform: scale(1) rotate(-6deg);
+  }
+  50% {
+    transform: scale(1.12) rotate(6deg);
+  }
+}
+
+.cc-float {
+  animation: cc-float 1s ease-out forwards;
+}
+
+.cc-rays {
+  background: repeating-conic-gradient(from 0deg, color-mix(in srgb, var(--cc-accent) 22%, transparent) 0deg 10deg, transparent 10deg 20deg);
+  mask-image: radial-gradient(circle, black 30%, transparent 70%);
+  animation: cc-spin 40s linear infinite;
+}
+
+.cc-golden {
+  animation: cc-golden-pulse 1.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--cc-gold) 80%, transparent));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cc-rays,
+  .cc-golden {
+    animation: none;
+  }
+
+  .cc-float {
+    animation-duration: 0.5s;
+  }
 }
